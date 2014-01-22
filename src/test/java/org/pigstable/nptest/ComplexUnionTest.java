@@ -28,14 +28,14 @@ public class ComplexUnionTest {
     public void testValidation() throws Exception{
         // -- indicate which data we want to use for which pig aliases
         String[] setA = {
-                "139380;AD210",
-                "139380;AD2100"
+                "1234;Garbage",
+                "12345;Collector"
         };
         script.input("setA", setA, NiftyPigTest.STORAGE_PIG_CSV);
 
         String[] setB = {
-                "SOHO;SOHO",
-                "9xaiqa00840tx05pp0kqi;SOHO",
+                "Starship;Enterprise",
+                "Battlestar;Galactica",
         };
         script.input("setB", setB, NiftyPigTest.STORAGE_PIG_CSV);
 
@@ -58,14 +58,14 @@ public class ComplexUnionTest {
     public void testValidationBySequence() throws Exception{
         // -- indicate which data we want to use for which pig aliases
         String[] setA = {
-                "139380;AD210",
-                "139380;AD2100"
+                "1234;Garbage",
+                "12345;Collector"
         };
         script.input("setA", setA, NiftyPigTest.STORAGE_PIG_CSV);
 
         String[] setB = {
-                "SOHO;SOHO",
-                "9xaiqa00840tx05pp0kqi;SOHO",
+                "Starship;Enterprise",
+                "Battlestar;Galactica",
         };
         script.input("setB", setB, NiftyPigTest.STORAGE_PIG_CSV);
 
@@ -74,10 +74,10 @@ public class ComplexUnionTest {
 
         // -- validate the output using the DataSetValidator
         DataSetReport report = script.validate(dataset("result").mode(DataSetValidator.ValidationMode.ByOrder).size(4)
-                .add(tuple().field(string("SOHO")).field(string("SOHO")))
-                .add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")))
-                .add(tuple().field(string("139380")).field(string("AD210")))
-                .add(tuple().field(string("139380")).field(string("AD2100")))
+                .add(tuple().field(string("Starship")).field(string("Enterprise")))
+                .add(tuple().field(string("Battlestar")).field(string("Galactica")))
+                .add(tuple().field(string("1234")).field(string("Garbage")))
+                .add(tuple().field(string("12345")).field(string("Collector")))
         );
 
         // -- print the test report
@@ -91,14 +91,14 @@ public class ComplexUnionTest {
     public void testValidationBySelectors() throws Exception {
         // -- indicate which data we want to use for which pig aliases
         String[] setA = {
-                "139380;AD210",
-                "139381;AD2100"
+                "1234;Garbage",
+                "12345;Collector"
         };
         script.input("setA", setA, NiftyPigTest.STORAGE_PIG_CSV);
 
         String[] setB = {
-                "SOHO;SOHO",
-                "9xaiqa00840tx05pp0kqi;SOHO",
+                "Starship;Enterprise",
+                "Battlestar;Galactica",
         };
         script.input("setB", setB, NiftyPigTest.STORAGE_PIG_CSV);
 
@@ -107,10 +107,10 @@ public class ComplexUnionTest {
 
         // -- validate the output using the DataSetValidator
         DataSetReport report = script.validate(dataset("result").mode(DataSetValidator.ValidationMode.BySelector).size(4)
-            .add(tuple().select("139381").field(string("AD2100")))
-            .add(tuple().select("SOHO").field(string("SOHO")))
-            .add(tuple().select("9xaiqa00840tx05pp0kqi").field(string("SOHO")))
-            .add(tuple().select("139380").field(string("AD210")))
+            .add(tuple().select("1234").field(string("Garbage")))
+            .add(tuple().select("Battlestar").field(string("Galactica")))
+            .add(tuple().select("Starship").field(string("Enterprise")))
+            .add(tuple().select("12345").field(string("Collector")))
         );
 
         // -- print the test report
