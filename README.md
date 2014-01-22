@@ -108,18 +108,18 @@ Let's take the previous test class apart and explain its different components.
 	}
 ```
 
-	This is mostly bookkeeping code. It creates the test class and the test method.  Maybe a bit special is the @Category annotation which is something new in Junit. It allows you to group your unit tests together. Since a PigUnit test will take a considerable amount of time to run, you probably don't want it to be a part of your standard build cycle.
+This is mostly bookkeeping code. It creates the test class and the test method.  Maybe a bit special is the @Category annotation which is something new in Junit. It allows you to group your unit tests together. Since a PigUnit test will take a considerable amount of time to run, you probably don't want it to be a part of your standard build cycle.
 
 Up to the Nifty part:
 
-	We start by declaring our test runner. You can add the code of the script directly of you may choose to point to an existing file.
+We start by declaring our test runner. You can add the code of the script directly of you may choose to point to an existing file.
 
 ```
         // -- initialize the pig testing class
         NiftyPigTest test = new NiftyPigTest(PIG_SCRIPT);
 ```
 
-	Next up we define the input data by declaring which alias should hold which data. The runner will modify the original Pig script and replace the original LOAD statements with new ones, pointing to temporary files holding the data you declare here. I told you it was nifty, didn't I.
+Next up we define the input data by declaring which alias should hold which data. The runner will modify the original Pig script and replace the original LOAD statements with new ones, pointing to temporary files holding the data you declare here. I told you it was nifty, didn't I.
 
 ```
         // -- indicate which data we want to use for which pig aliases
@@ -136,14 +136,14 @@ Up to the Nifty part:
         test.input("setB", setB, NiftyPigTest.STORAGE_PIG_CSV);
 ```
 
-	Once the inputs have been defined we can run the pig script to evaluate the expressions inside it. This will result in a lot of console output explaining what is being done.
+Once the inputs have been defined we can run the pig script to evaluate the expressions inside it. This will result in a lot of console output explaining what is being done.
 
 ```
         // -- actually execute the pig script
         test.execute();
 ```
 
-	Last but not least we will validate the outcome of our test. We do this by mapping a DataSetValidator to a specific alias. This way we can validate the contents of any alias in the script.
+Last but not least we will validate the outcome of our test. We do this by mapping a DataSetValidator to a specific alias. This way we can validate the contents of any alias in the script.
 
 ```
 	// -- validate the output using the DataSetValidator
