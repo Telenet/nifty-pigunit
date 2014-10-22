@@ -12,7 +12,7 @@ import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
 public class SimpleUnionTest {
-    private static final String PIG_SCRIPT = "src/test/resources/simpleUnion.pig";
+    private static final String PIG_SCRIPT = "simpleUnion.pig";
 
     @Test
     @Category(TestCategories.PigTest.class)

@@ -1,0 +1,5 @@
+org\pigstable\nptest\validator\TupleValidatorTest.class
+org\pigstable\nptest\ComplexUnionTest.class
+org\pigstable\nptest\SimpleUnionTest.class
+org\pigstable\nptest\validator\FieldValidatorTest.class
+org\pigstable\nptest\validator\DatasetValidatorTest.class

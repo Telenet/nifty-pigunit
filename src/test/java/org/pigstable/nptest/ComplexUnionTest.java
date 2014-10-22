@@ -14,7 +14,7 @@ import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
 public class ComplexUnionTest {
-    private static final String PIG_SCRIPT = "src/test/resources/simpleUnion.pig";
+    private static final String PIG_SCRIPT = "simpleUnion.pig";
 
     private NiftyPigTest script;
 
