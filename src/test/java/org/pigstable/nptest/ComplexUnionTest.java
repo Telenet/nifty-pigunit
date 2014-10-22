@@ -74,10 +74,10 @@ public class ComplexUnionTest {
 
         // -- validate the output using the DataSetValidator
         DataSetReport report = script.validate(dataset("result").mode(DataSetValidator.ValidationMode.ByOrder).size(4)
-                .add(tuple().field(string("Starship")).field(string("Enterprise")))
-                .add(tuple().field(string("Battlestar")).field(string("Galactica")))
                 .add(tuple().field(string("1234")).field(string("Garbage")))
                 .add(tuple().field(string("12345")).field(string("Collector")))
+                .add(tuple().field(string("Starship")).field(string("Enterprise")))
+                .add(tuple().field(string("Battlestar")).field(string("Galactica")))
         );
 
         // -- print the test report
