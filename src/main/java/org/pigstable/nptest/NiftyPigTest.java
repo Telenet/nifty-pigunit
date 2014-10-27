@@ -27,6 +27,7 @@ import java.util.Map;
 public class NiftyPigTest {
     public static final String STORAGE_PIG_CSV = "PigStorage(';')";
     public static final String STORAGE_DEFAULT = "PigStorage()";
+    public static final String STORAGE_PIG_PIPE = "PigStorage('|')";
     public static final String STORAGE_PIG_AMPERSAND = "PigStorage('&')";
     public static final String STORAGE_PIG_TAB_DELIM = "PigStorage('\t')";
 
@@ -69,6 +70,27 @@ public class NiftyPigTest {
         analyzeScript();
     }
 
+
+    NiftyPigTest(String[] args, String[] argFiles, String pigTextScript, Map<String, String> alias) throws IOException, ParseException {
+        this.originalTextPigScript = pigTextScript;
+        this.args = args;
+        this.argFiles = argFiles;
+        this.aliasOverrides = new HashMap<String, String>() {{
+            put("STORE", "");
+            put("DUMP", "");
+        }};
+
+        aliasOverrides.putAll(alias);
+
+        analyzeScript();
+    }
+
+
+
+    public NiftyPigTest(String scriptPath,  Map<String, String> alias) throws IOException, ParseException {
+       this(null, null, readFile(scriptPath), alias);
+    }
+
     public NiftyPigTest(String scriptPath) throws IOException, ParseException {
         this(null, null, readFile(scriptPath));
     }
@@ -87,6 +109,10 @@ public class NiftyPigTest {
 
     public NiftyPigTest(String[] script, String[] args, String[] argsFile) throws IOException, ParseException {
         this(args, argsFile, StringUtils.join(script, "\n"));
+    }
+
+    public NiftyPigTest(String scriptPath, String[] argFiles, Map<String, String> alias) throws IOException, ParseException {
+        this( null, argFiles, readFile(scriptPath), alias);
     }
 
     public NiftyPigTest(String scriptPath, String[] args, String[] argFiles) throws IOException, ParseException {
@@ -148,7 +174,9 @@ public class NiftyPigTest {
         pw.close();
 
         String pigSubstitutedFile = f.getCanonicalPath();
-        getPigServer().registerScript(pigSubstitutedFile, aliasOverrides);
+
+        PigServer pigServer = getPigServer();
+        pigServer.registerScript(pigSubstitutedFile, aliasOverrides);
     }
 
     /**
@@ -177,6 +205,9 @@ public class NiftyPigTest {
         pw.close();
 
         String pigSubstitutedFile = f.getCanonicalPath();
+
+        LOG.info(pigSubstitutedFile);
+
         getPigServer().registerScript(pigSubstitutedFile, aliasOverrides);
     }
 
@@ -260,6 +291,18 @@ public class NiftyPigTest {
         getCluster().copyFromLocalFile(data, destination, true);
         LOG.warn(String.format("Replaced %s with the given data (stored in file %s)", alias, destination));
         override(alias, String.format("%s = LOAD '%s' USING %s AS %s;", alias, destination, storage, sb.toString()));
+    }
+
+    public void input(String alias,
+                      String[] data,
+                      String storage,
+                      String schema) throws IOException, ParseException {
+        analyzeScript();
+
+        final String destination = FileLocalizer.getTemporaryPath(getPigServer().getPigContext()).toString();
+        getCluster().copyFromLocalFile(data, destination, true);
+        LOG.warn(String.format("Replaced %s with the given data (stored in file %s)", alias, destination));
+        override(alias, String.format("%s = LOAD '%s' USING %s AS %s;", alias, destination, storage, schema));
     }
 
     public DataSetReport validate(DataSetValidator.Builder validatorBuilder) throws IOException {

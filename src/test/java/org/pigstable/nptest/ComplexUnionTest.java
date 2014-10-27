@@ -14,7 +14,7 @@ import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
 public class ComplexUnionTest {
-    private static final String PIG_SCRIPT = "src/test/resources/simpleUnion.pig";
+    private static final String PIG_SCRIPT = "simpleUnion.pig";
 
     private NiftyPigTest script;
 
@@ -74,10 +74,10 @@ public class ComplexUnionTest {
 
         // -- validate the output using the DataSetValidator
         DataSetReport report = script.validate(dataset("result").mode(DataSetValidator.ValidationMode.ByOrder).size(4)
-                .add(tuple().field(string("Starship")).field(string("Enterprise")))
-                .add(tuple().field(string("Battlestar")).field(string("Galactica")))
                 .add(tuple().field(string("1234")).field(string("Garbage")))
                 .add(tuple().field(string("12345")).field(string("Collector")))
+                .add(tuple().field(string("Starship")).field(string("Enterprise")))
+                .add(tuple().field(string("Battlestar")).field(string("Galactica")))
         );
 
         // -- print the test report

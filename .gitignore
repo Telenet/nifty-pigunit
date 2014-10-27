@@ -1,0 +1,6 @@
+# Created by .gitignore support plugin (hsz.mobi)
+.idea/*.xml
+*.class
+*.jar
+nifty-pigunit.iml
+target/

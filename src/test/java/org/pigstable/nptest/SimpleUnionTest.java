@@ -12,7 +12,7 @@ import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
 public class SimpleUnionTest {
-    private static final String PIG_SCRIPT = "src/test/resources/simpleUnion.pig";
+    private static final String PIG_SCRIPT = "simpleUnion.pig";
 
     @Test
     @Category(TestCategories.PigTest.class)
@@ -38,10 +38,10 @@ public class SimpleUnionTest {
 
         // -- validate the output using the DataSetValidator
         DataSetReport report = test.validate(dataset("result").mode(DataSetValidator.ValidationMode.ByOrder).size(4)
-                .add(tuple().field(string("SOHO")).field(string("SOHO")))
-                .add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")))
                 .add(tuple().field(string("139380")).field(string("AD210")))
                 .add(tuple().field(string("139380")).field(string("AD2100")))
+                .add(tuple().field(string("SOHO")).field(string("SOHO")))
+                .add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")))
         );
 
         // -- print the test report
