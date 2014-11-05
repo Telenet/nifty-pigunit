@@ -13,8 +13,11 @@ import org.apache.pig.pigunit.pig.PigServer;
 import org.apache.pig.tools.parameters.ParameterSubstitutionPreprocessor;
 import org.apache.pig.tools.parameters.ParseException;
 import org.junit.Assert;
+import org.pigstable.nptest.dataset.TestDataSet;
+import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.validator.DataSetValidator;
+import org.pigstable.nptest.validator.TupleValidator;
 
 import java.io.*;
 import java.nio.MappedByteBuffer;
@@ -22,6 +25,7 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class NiftyPigTest {
@@ -277,9 +281,6 @@ public class NiftyPigTest {
         }
     }
 
-    public void input(String alias, String[] data) throws IOException, ParseException {
-        input(alias, data, STORAGE_DEFAULT);
-    }
 
     public void input(String alias, String[] data, String storage) throws IOException, ParseException {
         analyzeScript();
@@ -292,6 +293,7 @@ public class NiftyPigTest {
         LOG.warn(String.format("Replaced %s with the given data (stored in file %s)", alias, destination));
         override(alias, String.format("%s = LOAD '%s' USING %s AS %s;", alias, destination, storage, sb.toString()));
     }
+
 
     public void input(String alias,
                       String[] data,
@@ -309,5 +311,22 @@ public class NiftyPigTest {
         DataSetValidator validator = validatorBuilder.result();
 
         return validator.validate(getAlias(validator.getName()));
+    }
+
+    public void input(String setA, TestDataSet testData, String storagePigCsv) throws IOException, ParseException {
+
+        input(setA,testData.getDataSet(),storagePigCsv);
+    }
+
+    public DataSetReport validate(String result, ValidatedDataSet validatedDataset, DataSetValidator.ValidationMode mode, int tupleSize) throws IOException {
+
+        DataSetValidator.Builder tuple = DataSetValidator.dataset(result).mode(mode).size(tupleSize);
+
+        for(TupleValidator.Builder t : validatedDataset.getTuples())
+        {
+            tuple.add(t);
+        }
+
+        return validate(tuple);
     }
 }
