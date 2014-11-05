@@ -103,24 +103,20 @@ public class ComplexUnionTest {
     @Category(TestCategories.PigTest.class)
     public void testValidationBySelectors() throws Exception {
         // -- indicate which data we want to use for which pig aliases
-//        String[] setA = {
-//                "1234;Garbage",
-//                "12345;Collector"
-//        };
+        String[] setA = {
+                "1234;Garbage",
+                "12345;Collector"
+        };
 
 
-//
-//        setA.append();
-//
-//        script.input("setA", , NiftyPigTest.STORAGE_PIG_CSV);
-//        script.input("setA", setA, NiftyPigTest.STORAGE_PIG_CSV);
+        script.input("setA", setA, NiftyPigTest.STORAGE_PIG_CSV);
 
         String[] setB = {
                 "Starship;Enterprise",
                 "Battlestar;Galactica",
         };
 
-        String[] schema = {"A", "B"};
+        script.input("setB", setB, NiftyPigTest.STORAGE_PIG_CSV);
 
         // -- actually execute the pig script
         script.execute();

@@ -27,6 +27,15 @@ public class TestDataSet {
 
     public String[] getDataSet()
     {
-        return (String[])tuples.toArray();
+        Object[] objects = tuples.toArray();
+
+        String[] data = new String[objects.length];
+
+        for(int i=0; i < objects.length; i ++)
+        {
+            data[i] = (String)objects[i];
+        }
+
+        return data;
     }
 }
