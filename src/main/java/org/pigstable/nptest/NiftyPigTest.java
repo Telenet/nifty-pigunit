@@ -16,9 +16,11 @@ import org.apache.pig.tools.parameters.ParseException;
 import org.junit.Assert;
 import org.pigstable.nptest.dataset.MappedDataset;
 import org.pigstable.nptest.dataset.TestDataSet;
+import org.pigstable.nptest.dataset.ValidateMappedDataSet;
 import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.validator.DataSetValidator;
+import org.pigstable.nptest.validator.FieldValidator;
 import org.pigstable.nptest.validator.TupleValidator;
 
 import java.io.*;
@@ -371,5 +373,33 @@ public class NiftyPigTest {
             }
         }
         return data;
+    }
+
+    public DataSetReport validate(String result, ValidateMappedDataSet validdata, DataSetValidator.ValidationMode mode, int tupleSize) throws IOException {
+
+        List<Map<String, FieldValidator>> tuples = validdata.getTuples();
+
+        LOG.info(String.format("Size of valid dataset %s ", tuples.size()));
+        LOG.info(String.format("tuple size defined %s ", tupleSize));
+
+        List<String> schema = validdata.getSchema();
+        DataSetValidator.Builder tuple = DataSetValidator.dataset(result).mode(mode).size(tupleSize);
+
+        for(Map<String,FieldValidator>  datatuple : tuples)
+        {
+            TupleValidator.Builder tuple1 = TupleValidator.tuple();
+            for(String col : schema)
+            {
+                FieldValidator validator = datatuple.get(col);
+                if(validator != null)
+                {
+                    tuple1.field(validator);
+                }
+            }
+
+            tuple.add(tuple1);
+        }
+
+        return validate(tuple);
     }
 }

@@ -6,19 +6,18 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pigstable.nptest.dataset.MappedDataset;
-import org.pigstable.nptest.dataset.ValidateMappedDataSet;
+import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.validator.DataSetValidator;
-import org.pigstable.nptest.validator.FieldValidator;
 
 import java.util.List;
 import java.util.Map;
 
 import static org.pigstable.nptest.validator.FieldValidator.string;
+import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
-public class MappedDataTest {
-
+public class ValidateMappedDataSetTest {
     private static final String PIG_SCRIPT = "simpleUnion.pig";
 
     @Test
@@ -70,36 +69,15 @@ public class MappedDataTest {
         // -- actually execute the pig script
         test.execute();
 
-        ValidateMappedDataSet validdata = new ValidateMappedDataSet(mappings);
+        ValidatedDataSet validatedDataset = new ValidatedDataSet();
 
-        Map<String,FieldValidator> testValidator1 = Maps.newHashMap();
-
-        testValidator1.put("col1",string("139380"));
-        testValidator1.put("col2",string("AD210"));
-
-        Map<String,FieldValidator> testValidator2 = Maps.newHashMap();
-
-        testValidator2.put("col1",string("139380"));
-        testValidator2.put("col2",string("AD2100"));
-
-        Map<String,FieldValidator> testValidator3 = Maps.newHashMap();
-
-        testValidator3.put("col1",string("SOHO"));
-        testValidator3.put("col2",string("SOHO"));
-
-        Map<String,FieldValidator> testValidator4 = Maps.newHashMap();
-
-        testValidator4.put("col1",string("9xaiqa00840tx05pp0kqi"));
-        testValidator4.put("col2",string("SOHO"));
-
-        validdata.add(testValidator1);
-        validdata.add(testValidator2);
-        validdata.add(testValidator3);
-        validdata.add(testValidator4);
-
+        validatedDataset.add(tuple().field(string("139380")).field(string("AD210")));
+        validatedDataset.add(tuple().field(string("139380")).field(string("AD2100")));
+        validatedDataset.add(tuple().field(string("SOHO")).field(string("SOHO")));
+        validatedDataset.add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")));
 
         //Validate with new api
-        DataSetReport report = test.validate("result", validdata, DataSetValidator.ValidationMode.ByOrder,4);
+        DataSetReport report = test.validate("result", validatedDataset, DataSetValidator.ValidationMode.ByOrder,4);
 
         // -- print the test report
         System.out.println(StringReporter.format(report));
