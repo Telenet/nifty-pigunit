@@ -1,23 +1,23 @@
 package org.pigstable.nptest;
 
 import com.google.common.collect.Lists;
-import org.apache.pig.impl.logicalLayer.schema.Schema;
+import com.google.common.collect.Maps;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.pigstable.nptest.dataset.TestDataSet;
+import org.pigstable.nptest.dataset.MappedDataset;
 import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.validator.DataSetValidator;
 
 import java.util.List;
+import java.util.Map;
 
-import static org.pigstable.nptest.validator.DataSetValidator.dataset;
 import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
-public class SimpleUnionTest {
+public class ValidateMappedDataSetTest {
     private static final String PIG_SCRIPT = "simpleUnion.pig";
 
     @Test
@@ -26,20 +26,45 @@ public class SimpleUnionTest {
         // -- initialize the pig testing class
         NiftyPigTest test = new NiftyPigTest(PIG_SCRIPT);
 
+        //define schema
+        List<String> mappings = Lists.newArrayList();
 
-        TestDataSet setA = new TestDataSet();
+        mappings.add("col1");
+        mappings.add("col2");
 
-        setA.add("139380;AD210");
-        setA.add("139380;AD2100");
+        //Map schema to data
+        MappedDataset setA = new MappedDataset(mappings);
 
-        test.input("setA", setA, NiftyPigTest.STORAGE_PIG_CSV);
+        Map<String,String> data1 = Maps.newHashMap();
+        data1.put("col1","139380");
+        data1.put("col2","AD210");
 
-        TestDataSet setB = new TestDataSet();
+        Map<String,String> data2 = Maps.newHashMap();
+        data2.put("col1","139380");
+        data2.put("col2","AD2100");
 
-        setB.add("SOHO;SOHO");
-        setB.add("9xaiqa00840tx05pp0kqi;SOHO");
+        setA.add(data1);
+        setA.add(data2);
 
-        test.input("setB", setB, NiftyPigTest.STORAGE_PIG_CSV);
+        test.input("setA", setA);
+
+        //Map schema to data
+        MappedDataset setB = new MappedDataset(mappings);
+
+        Map<String,String> data3 = Maps.newHashMap();
+
+        data3.put("col1","SOHO");
+        data3.put("col2","SOHO");
+
+        Map<String,String> data4 = Maps.newHashMap();
+
+        data4.put("col1","9xaiqa00840tx05pp0kqi");
+        data4.put("col2","SOHO");
+
+        setB.add(data3);
+        setB.add(data4);
+
+        test.input("setB", setB);
 
         // -- actually execute the pig script
         test.execute();
@@ -60,5 +85,4 @@ public class SimpleUnionTest {
         // -- check the report was valid
         Assert.assertTrue(report.isValid());
     }
-
 }

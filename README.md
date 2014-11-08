@@ -236,3 +236,148 @@ If you want to parameterize your test (for example, to validate if a number is i
 ```
 
 Beware that the validator construction method parameters have to be final.
+
+
+Another way to add data with huge number of columns can be done using MappedDataset and TestDataSet
+
+These data input methods makes your test data maintainable, in a scenario where you have a large number of columns.
+
+
+```
+
+    @Test
+    @Category(TestCategories.PigTest.class)
+    public void testTextInput() throws Exception{
+        // -- initialize the pig testing class
+        NiftyPigTest test = new NiftyPigTest(PIG_SCRIPT);
+
+
+        TestDataSet setA = new TestDataSet();
+
+        setA.add("139380;AD210");
+        setA.add("139380;AD2100");
+
+        test.input("setA", setA, NiftyPigTest.STORAGE_PIG_CSV);
+
+        TestDataSet setB = new TestDataSet();
+
+        setB.add("SOHO;SOHO");
+        setB.add("9xaiqa00840tx05pp0kqi;SOHO");
+
+        test.input("setB", setB, NiftyPigTest.STORAGE_PIG_CSV);
+
+        // -- actually execute the pig script
+        test.execute();
+
+        ValidatedDataSet validatedDataset = new ValidatedDataSet();
+
+        validatedDataset.add(tuple().field(string("139380")).field(string("AD210")));
+        validatedDataset.add(tuple().field(string("139380")).field(string("AD2100")));
+        validatedDataset.add(tuple().field(string("SOHO")).field(string("SOHO")));
+        validatedDataset.add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")));
+
+        //Validate with new api
+        DataSetReport report = test.validate("result", validatedDataset, DataSetValidator.ValidationMode.ByOrder,4);
+
+        // -- print the test report
+        System.out.println(StringReporter.format(report));
+
+        // -- check the report was valid
+        Assert.assertTrue(report.isValid());
+    }
+  ```
+
+```
+public class MappedDataTest {
+
+    private static final String PIG_SCRIPT = "simpleUnion.pig";
+
+    @Test
+    @Category(TestCategories.PigTest.class)
+    public void testTextInput() throws Exception{
+        // -- initialize the pig testing class
+        NiftyPigTest test = new NiftyPigTest(PIG_SCRIPT);
+
+        //define schema
+        List<String> mappings = Lists.newArrayList();
+
+        mappings.add("col1");
+        mappings.add("col2");
+
+        //Map schema to data
+        MappedDataSet setA = new MappedDataSet(mappings);
+
+        Map<String,String> data1 = Maps.newHashMap();
+        data1.put("col1","139380");
+        data1.put("col2","AD210");
+
+        Map<String,String> data2 = Maps.newHashMap();
+        data2.put("col1","139380");
+        data2.put("col2","AD2100");
+
+        setA.add(data1);
+        setA.add(data2);
+
+        test.input("setA", setA);
+
+        //Map schema to data
+        MappedDataSet setB = new MappedDataSet(mappings);
+
+        Map<String,String> data3 = Maps.newHashMap();
+
+        data3.put("col1","SOHO");
+        data3.put("col2","SOHO");
+
+        Map<String,String> data4 = Maps.newHashMap();
+
+        data4.put("col1","9xaiqa00840tx05pp0kqi");
+        data4.put("col2","SOHO");
+
+        setB.add(data3);
+        setB.add(data4);
+
+        test.input("setB", setB);
+
+        // -- actually execute the pig script
+        test.execute();
+
+        ValidateMappedDataSet validdata = new ValidateMappedDataSet(mappings);
+
+        Map<String,FieldValidator> testValidator1 = Maps.newHashMap();
+
+        testValidator1.put("col1",string("139380"));
+        testValidator1.put("col2",string("AD210"));
+
+        Map<String,FieldValidator> testValidator2 = Maps.newHashMap();
+
+        testValidator2.put("col1",string("139380"));
+        testValidator2.put("col2",string("AD2100"));
+
+        Map<String,FieldValidator> testValidator3 = Maps.newHashMap();
+
+        testValidator3.put("col1",string("SOHO"));
+        testValidator3.put("col2",string("SOHO"));
+
+        Map<String,FieldValidator> testValidator4 = Maps.newHashMap();
+
+        testValidator4.put("col1",string("9xaiqa00840tx05pp0kqi"));
+        testValidator4.put("col2",string("SOHO"));
+
+        validdata.add(testValidator1);
+        validdata.add(testValidator2);
+        validdata.add(testValidator3);
+        validdata.add(testValidator4);
+
+
+        //Validate with new api
+        DataSetReport report = test.validate("result", validdata, DataSetValidator.ValidationMode.ByOrder,4);
+
+        // -- print the test report
+        System.out.println(StringReporter.format(report));
+
+        // -- check the report was valid
+        Assert.assertTrue(report.isValid());
+    }
+    ```
+    
+    

@@ -1,5 +1,6 @@
 package org.pigstable.nptest;
 
+import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.pig.ExecType;
@@ -13,8 +14,14 @@ import org.apache.pig.pigunit.pig.PigServer;
 import org.apache.pig.tools.parameters.ParameterSubstitutionPreprocessor;
 import org.apache.pig.tools.parameters.ParseException;
 import org.junit.Assert;
+import org.pigstable.nptest.dataset.MappedDataset;
+import org.pigstable.nptest.dataset.TestDataSet;
+import org.pigstable.nptest.dataset.ValidateMappedDataSet;
+import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.validator.DataSetValidator;
+import org.pigstable.nptest.validator.FieldValidator;
+import org.pigstable.nptest.validator.TupleValidator;
 
 import java.io.*;
 import java.nio.MappedByteBuffer;
@@ -22,7 +29,9 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class NiftyPigTest {
     public static final String STORAGE_PIG_CSV = "PigStorage(';')";
@@ -277,9 +286,6 @@ public class NiftyPigTest {
         }
     }
 
-    public void input(String alias, String[] data) throws IOException, ParseException {
-        input(alias, data, STORAGE_DEFAULT);
-    }
 
     public void input(String alias, String[] data, String storage) throws IOException, ParseException {
         analyzeScript();
@@ -292,6 +298,7 @@ public class NiftyPigTest {
         LOG.warn(String.format("Replaced %s with the given data (stored in file %s)", alias, destination));
         override(alias, String.format("%s = LOAD '%s' USING %s AS %s;", alias, destination, storage, sb.toString()));
     }
+
 
     public void input(String alias,
                       String[] data,
@@ -309,5 +316,90 @@ public class NiftyPigTest {
         DataSetValidator validator = validatorBuilder.result();
 
         return validator.validate(getAlias(validator.getName()));
+    }
+
+    public void input(String setA, TestDataSet testData, String storagePigCsv) throws IOException, ParseException {
+
+        input(setA,testData.getDataSet(),storagePigCsv);
+    }
+
+    public DataSetReport validate(String result, ValidatedDataSet validatedDataset, DataSetValidator.ValidationMode mode, int tupleSize) throws IOException {
+
+        DataSetValidator.Builder tuple = DataSetValidator.dataset(result).mode(mode).size(tupleSize);
+
+        for(TupleValidator.Builder t : validatedDataset.getTuples())
+        {
+            tuple.add(t);
+        }
+
+        return validate(tuple);
+    }
+
+    public void input(String setA, MappedDataset mappedDataset) throws Exception {
+        List<String> schema = mappedDataset.getSchema();
+        List<Map<String, String>> tuples = mappedDataset.getTuples();
+
+        TestDataSet testDataset = new TestDataSet();
+
+        for(Map<String,String> tuple : tuples)
+        {
+            List<String> dataset = Lists.newArrayList();
+
+            for(String col : schema)
+            {
+                dataset.add(tuple.get(col));
+            }
+            testDataset.add(convert(dataset, "|"));
+        }
+
+        input(setA,testDataset,NiftyPigTest.STORAGE_PIG_PIPE);
+    }
+
+    private String convert(List<String> dataset, String s) throws Exception {
+
+        String data = "";
+
+        if(dataset.size() == 0)
+        {
+            throw new Exception("Dataset cannot be null");
+        }
+        else
+        {
+          data = dataset.get(0);
+
+            for(int i=1; i < dataset.size(); i++)
+            {
+                data = data +s+dataset.get(i);
+            }
+        }
+        return data;
+    }
+
+    public DataSetReport validate(String result, ValidateMappedDataSet validdata, DataSetValidator.ValidationMode mode, int tupleSize) throws IOException {
+
+        List<Map<String, FieldValidator>> tuples = validdata.getTuples();
+
+        LOG.info(String.format("Size of valid dataset %s ", tuples.size()));
+        LOG.info(String.format("tuple size defined %s ", tupleSize));
+
+        List<String> schema = validdata.getSchema();
+        DataSetValidator.Builder tuple = DataSetValidator.dataset(result).mode(mode).size(tupleSize);
+
+        for(Map<String,FieldValidator>  datatuple : tuples)
+        {
+            TupleValidator.Builder tuple1 = TupleValidator.tuple();
+            for(String col : schema)
+            {
+                FieldValidator validator = datatuple.get(col);
+                if(validator != null)
+                {
+                    tuple1.field(validator);
+                }
+            }
+
+            tuple.add(tuple1);
+        }
+
+        return validate(tuple);
     }
 }
