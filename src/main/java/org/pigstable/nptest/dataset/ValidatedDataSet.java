@@ -9,8 +9,8 @@ import static org.pigstable.nptest.validator.TupleValidator.Builder;
 public class ValidatedDataSet {
     List<Builder> tupleValidators = Lists.newArrayList();
 
-    public void add(Builder tuple) {
-        tupleValidators.add(tuple);
+    public ValidatedDataSet add(Builder tuple) {
+        tupleValidators.add(tuple); return this;
     }
 
     public List<Builder>    getTuples() {

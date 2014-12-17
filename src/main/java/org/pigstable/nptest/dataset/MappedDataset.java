@@ -6,12 +6,12 @@ import com.google.common.collect.Lists;
 import java.util.List;
 import java.util.Map;
 
-public class MappedDataset {
+public class MappedDataSet {
 
     private List<String> schema;
     private List<Map<String, String>> tuples = Lists.newArrayList();
 
-    public MappedDataset(List<String> schema)
+    public MappedDataSet(List<String> schema)
     {
         this.schema = schema;
     }

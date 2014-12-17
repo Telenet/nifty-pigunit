@@ -113,4 +113,27 @@ public class DatasetValidatorTest {
 
         Assert.assertTrue(report.isValid());
     }
+
+
+    @Test
+    public void testSizeOnlyValidators() throws Exception{
+        DataSetValidator validator = dataset("TestDataSet")
+                .mode(DataSetValidator.ValidationMode.SizeOnly)
+                .size(3).result();
+
+        TupleFactory f = TupleFactory.getInstance();
+
+        List<Tuple> tuples = Arrays.asList(
+                f.newTuple(Arrays.asList("r1f1", "r1f2", "r1f3")),
+                f.newTuple(Arrays.asList("r2f1", "r2f2", "r2f3")),
+                f.newTuple(Arrays.asList("r3f1", "r3f2", "r3f3"))
+        );
+
+        DataSetReport report = validator.validate(tuples.iterator());
+
+        // -- print the test report
+        System.out.println(StringReporter.format(report));
+
+        Assert.assertTrue(report.isValid());
+    }
 }

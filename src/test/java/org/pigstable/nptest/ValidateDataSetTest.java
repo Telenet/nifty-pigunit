@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.pigstable.nptest.dataset.MappedDataset;
+import org.pigstable.nptest.dataset.MappedDataSet;
 import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
@@ -17,7 +17,7 @@ import java.util.Map;
 import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
-public class ValidateMappedDataSetTest {
+public class ValidateDataSetTest {
     private static final String PIG_SCRIPT = "simpleUnion.pig";
 
     @Test
@@ -33,7 +33,7 @@ public class ValidateMappedDataSetTest {
         mappings.add("col2");
 
         //Map schema to data
-        MappedDataset setA = new MappedDataset(mappings);
+        MappedDataSet setA = new MappedDataSet(mappings);
 
         Map<String,String> data1 = Maps.newHashMap();
         data1.put("col1","139380");
@@ -49,7 +49,7 @@ public class ValidateMappedDataSetTest {
         test.input("setA", setA);
 
         //Map schema to data
-        MappedDataset setB = new MappedDataset(mappings);
+        MappedDataSet setB = new MappedDataSet(mappings);
 
         Map<String,String> data3 = Maps.newHashMap();
 

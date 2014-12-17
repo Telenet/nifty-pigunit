@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 
 public class DataSetValidator {
-    public static enum ValidationMode { Single, ByOrder, BySelector }
+    public static enum ValidationMode { Single, ByOrder, BySelector, SizeOnly }
 
     private String name;
     private ValidationMode validationMode;
@@ -42,7 +42,7 @@ public class DataSetValidator {
         DataSetReport report = new DataSetReport(this.name);
 
         // -- check there are validators available
-        if (this.tupleValidators.isEmpty())
+        if (this.tupleValidators.isEmpty() && !this.getValidationMode().equals(ValidationMode.SizeOnly))
             throw new RuntimeException("No tuple validators have been defined!");
 
         List<Tuple> tuples = IteratorUtils.toList(actual);
@@ -73,6 +73,10 @@ public class DataSetValidator {
 
                 validateBySingleValidator(report, tuples);
                 break;
+
+            case SizeOnly:
+                if (tuples.size() != expectedSize) throw new RuntimeException(String.format("Expect tuple size was %s, Tuple size received %s",expectedSize,tuples.size()));
+                break;
         }
 
         return report;
@@ -85,7 +89,15 @@ public class DataSetValidator {
             report.add(validator.validate("#" + i, actual.get(i)));
         }
     }
+/**
+    protected void validateSizeOnly(DataSetReport report, List<Tuple> actual) {
+        TupleValidator validator = this.tupleValidators.get(0);
 
+            report.add(validator.validate);
+        }
+    }
+
+ **/
     protected void validateByOrder(DataSetReport report, List<Tuple> actual) {
         for (int i = 0; i < actual.size(); i++) {
             TupleValidator validator = this.tupleValidators.get(i);
@@ -213,7 +225,7 @@ public class DataSetValidator {
             if (validator.name == null) throw new RuntimeException("The validator name has not been set!");
             if (validator.expectedSize == null) throw new RuntimeException("The expected number of tuples has not been set!");
             if (validator.validationMode == null) throw new RuntimeException("The validator validation mode has not been set!");
-            if (validator.tupleValidators.isEmpty()) throw new RuntimeException("The validator has no tuple validators!");
+            if (validator.tupleValidators.isEmpty() && !validator.getValidationMode().equals(ValidationMode.SizeOnly)) throw new RuntimeException("The validator has no tuple validators!");
 
             return validator;
         }
