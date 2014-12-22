@@ -101,8 +101,10 @@ public class DataSetValidator {
     protected void validateByOrder(DataSetReport report, List<Tuple> actual) {
         for (int i = 0; i < actual.size(); i++) {
             TupleValidator validator = this.tupleValidators.get(i);
+            System.out.println(tupleValidators.get(i) +"|"+actual.get(i));
             report.add(validator.validate("#" + i, actual.get(i)));
         }
+
     }
 
     protected void validateBySelector(DataSetReport report, List<Tuple> actual) {

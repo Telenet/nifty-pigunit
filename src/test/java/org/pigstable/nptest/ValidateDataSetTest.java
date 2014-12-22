@@ -14,6 +14,7 @@ import org.pigstable.nptest.validator.DataSetValidator;
 import java.util.List;
 import java.util.Map;
 
+import static org.pigstable.nptest.validator.DataSetValidator.dataset;
 import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
@@ -71,10 +72,10 @@ public class ValidateDataSetTest {
 
         ValidatedDataSet validatedDataset = new ValidatedDataSet();
 
-        validatedDataset.add(tuple().field(string("139380")).field(string("AD210")));
-        validatedDataset.add(tuple().field(string("139380")).field(string("AD2100")));
         validatedDataset.add(tuple().field(string("SOHO")).field(string("SOHO")));
         validatedDataset.add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")));
+        validatedDataset.add(tuple().field(string("139380")).field(string("AD210")));
+        validatedDataset.add(tuple().field(string("139380")).field(string("AD2100")));
 
         //Validate with new api
         DataSetReport report = test.validate("result", validatedDataset, DataSetValidator.ValidationMode.ByOrder,4);
@@ -83,6 +84,46 @@ public class ValidateDataSetTest {
         System.out.println(StringReporter.format(report));
 
         // -- check the report was valid
+        Assert.assertTrue(report.isValid());
+    }
+
+    @Test
+    @Category(TestCategories.PigTest.class)
+    public void testValidationBySelectors() throws Exception {
+
+        NiftyPigTest script = new NiftyPigTest(PIG_SCRIPT);
+
+        // -- indicate which data we want to use for which pig aliases
+        String[] setA = {
+                "1234;Garbage",
+                "12345;Collector"
+        };
+
+
+        script.input("setA", setA, NiftyPigTest.STORAGE_PIG_CSV);
+
+        String[] setB = {
+                "Starship;Enterprise",
+                "Battlestar;Galactica",
+        };
+
+        script.input("setB", setB, NiftyPigTest.STORAGE_PIG_CSV);
+
+        // -- actually execute the pig script
+        script.execute();
+
+        // -- validate the output using the DataSetValidator
+
+        ValidatedDataSet validatedDataSet = new ValidatedDataSet();
+        DataSetReport report = script.validate(dataset("result").mode(DataSetValidator.ValidationMode.BySelector).size(4)
+                        .add(tuple().select("1234").field(string("Garbage")))
+                        .add(tuple().select("Battlestar").field(string("Galactica")))
+                        .add(tuple().select("Starship").field(string("Enterprise")))
+                        .add(tuple().select("12345").field(string("Collector")))
+        );
+        // -- print the test report
+        System.out.println(StringReporter.format(report));
+
         Assert.assertTrue(report.isValid());
     }
 }

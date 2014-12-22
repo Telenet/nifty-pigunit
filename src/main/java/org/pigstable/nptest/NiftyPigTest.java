@@ -289,6 +289,8 @@ public class NiftyPigTest {
     public void input(String alias, String[] data, String storage) throws IOException, ParseException {
         analyzeScript();
 
+        System.out.println(data);
+
         StringBuilder sb = new StringBuilder();
         Schema.stringifySchema(sb, getPigServer().dumpSchema(alias), DataType.TUPLE) ;
 
@@ -329,6 +331,7 @@ public class NiftyPigTest {
         for(TupleValidator.Builder t : validatedDataset.getTuples())
         {
             tuple.add(t);
+            System.out.println(t);
         }
 
         return validate(tuple);
