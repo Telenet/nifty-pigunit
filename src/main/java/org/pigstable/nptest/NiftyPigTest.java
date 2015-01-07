@@ -14,7 +14,7 @@ import org.apache.pig.pigunit.pig.PigServer;
 import org.apache.pig.tools.parameters.ParameterSubstitutionPreprocessor;
 import org.apache.pig.tools.parameters.ParseException;
 import org.junit.Assert;
-import org.pigstable.nptest.dataset.MappedDataSet;
+import org.pigstable.nptest.dataset.MappedDataset;
 import org.pigstable.nptest.dataset.TestDataSet;
 import org.pigstable.nptest.dataset.ValidateMappedDataSet;
 import org.pigstable.nptest.dataset.ValidatedDataSet;
@@ -337,7 +337,7 @@ public class NiftyPigTest {
         return validate(tuple);
     }
 
-    public void input(String setA, MappedDataSet mappedDataset) throws Exception {
+    public void input(String setA, MappedDataset mappedDataset) throws Exception {
         List<String> schema = mappedDataset.getSchema();
         List<Map<String, String>> tuples = mappedDataset.getTuples();
 

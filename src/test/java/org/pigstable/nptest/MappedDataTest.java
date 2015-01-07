@@ -5,7 +5,7 @@ import com.google.common.collect.Maps;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.pigstable.nptest.dataset.MappedDataSet;
+import org.pigstable.nptest.dataset.MappedDataset;
 import org.pigstable.nptest.dataset.ValidateMappedDataSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
@@ -34,7 +34,7 @@ public class MappedDataTest {
         mappings.add("col2");
 
         //Map schema to data
-        MappedDataSet setA = new MappedDataSet(mappings);
+        MappedDataset setA = new MappedDataset(mappings);
 
         Map<String,String> data1 = Maps.newHashMap();
         data1.put("col1","139380");
@@ -50,7 +50,7 @@ public class MappedDataTest {
         test.input("setA", setA);
 
         //Map schema to data
-        MappedDataSet setB = new MappedDataSet(mappings);
+        MappedDataset setB = new MappedDataset(mappings);
 
         Map<String,String> data3 = Maps.newHashMap();
 
