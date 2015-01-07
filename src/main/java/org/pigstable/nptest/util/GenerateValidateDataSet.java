@@ -1,8 +1,6 @@
 package org.pigstable.nptest.util;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.hadoop.fs.FileUtil;
-import org.pigstable.nptest.NiftyPigTest;
 import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.validator.FieldValidator;
 import org.pigstable.nptest.validator.TupleValidator;
