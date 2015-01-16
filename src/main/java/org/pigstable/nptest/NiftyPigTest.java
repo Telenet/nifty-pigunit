@@ -1,5 +1,7 @@
 package org.pigstable.nptest;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -31,7 +33,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 public class NiftyPigTest {
     public static final String STORAGE_PIG_CSV = "PigStorage(';')";
@@ -42,16 +43,24 @@ public class NiftyPigTest {
 
     private static final Logger LOG = Logger.getLogger(NiftyPigTest.class);
 
-    /** The text of the Pig script to test with no substitution or change. */
+    /**
+     * The text of the Pig script to test with no substitution or change.
+     */
     private final String originalTextPigScript;
 
-    /** The list of arguments of the script. */
+    /**
+     * The list of arguments of the script.
+     */
     private final String[] args;
 
-    /** The list of file arguments of the script. */
+    /**
+     * The list of file arguments of the script.
+     */
     private final String[] argFiles;
 
-    /** The list of aliases to override in the script. */
+    /**
+     * The list of aliases to override in the script.
+     */
     private final Map<String, String> aliasOverrides;
 
     private static ThreadLocal<PigServer> pig = new ThreadLocal<PigServer>();
@@ -62,8 +71,8 @@ public class NiftyPigTest {
     /**
      * Initializes the Pig test.
      *
-     * @param args The list of arguments of the script.
-     * @param argFiles The list of file arguments of the script.
+     * @param args          The list of arguments of the script.
+     * @param argFiles      The list of file arguments of the script.
      * @param pigTextScript The text of the Pig script to test with no substitution or change.
      */
     @SuppressWarnings("serial")
@@ -95,9 +104,8 @@ public class NiftyPigTest {
     }
 
 
-
-    public NiftyPigTest(String scriptPath,  Map<String, String> alias) throws IOException, ParseException {
-       this(null, null, readFile(scriptPath), alias);
+    public NiftyPigTest(String scriptPath, Map<String, String> alias) throws IOException, ParseException {
+        this(null, null, readFile(scriptPath), alias);
     }
 
     public NiftyPigTest(String scriptPath) throws IOException, ParseException {
@@ -121,7 +129,7 @@ public class NiftyPigTest {
     }
 
     public NiftyPigTest(String scriptPath, String[] argFiles, Map<String, String> alias) throws IOException, ParseException {
-        this( null, argFiles, readFile(scriptPath), alias);
+        this(null, argFiles, readFile(scriptPath), alias);
     }
 
     public NiftyPigTest(String scriptPath, String[] args, String[] argFiles) throws IOException, ParseException {
@@ -162,7 +170,7 @@ public class NiftyPigTest {
     /**
      * Executes the Pig script with its current overrides.
      *
-     * @throws java.io.IOException If a temp file containing the pig script could not be created.
+     * @throws java.io.IOException                            If a temp file containing the pig script could not be created.
      * @throws org.apache.pig.tools.parameters.ParseException The pig script could not have all its variables substituted.
      */
     public void execute() throws IOException, ParseException {
@@ -191,7 +199,7 @@ public class NiftyPigTest {
     /**
      * Analyze the given pig script.
      *
-     * @throws java.io.IOException If a temp file containing the pig script could not be created.
+     * @throws java.io.IOException                            If a temp file containing the pig script could not be created.
      * @throws org.apache.pig.tools.parameters.ParseException The pig script could not have all its variables substituted.
      */
     protected void analyzeScript() throws IOException, ParseException {
@@ -222,9 +230,10 @@ public class NiftyPigTest {
 
     /**
      * Gets an iterator on the content of one alias of the script.
-     *
+     * <p/>
      * <p>For now use a giant String in order to display all the differences in one time. It might not
      * work with giant expected output.
+     *
      * @throws java.io.IOException If the Pig script could not be executed correctly.
      */
     public Iterator<Tuple> getAlias(String alias) throws IOException {
@@ -244,9 +253,9 @@ public class NiftyPigTest {
 
     /**
      * Replaces the query of an aliases by another query.
-     *
+     * <p/>
      * <p>For example:
-     *
+     * <p/>
      * <pre>
      * B = FILTER A BY count > 5;
      * overridden with:
@@ -275,23 +284,18 @@ public class NiftyPigTest {
     }
 
     private static String readFile(File file) throws IOException {
-        FileInputStream stream = new FileInputStream(file);
-        try {
+        try (FileInputStream stream = new FileInputStream(file)) {
             FileChannel fc = stream.getChannel();
             MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
             return Charset.defaultCharset().decode(bb).toString();
         }
-        finally {
-            stream.close();
-        }
     }
-
 
     public void input(String alias, String[] data, String storage) throws IOException, ParseException {
         analyzeScript();
 
         StringBuilder sb = new StringBuilder();
-        Schema.stringifySchema(sb, getPigServer().dumpSchema(alias), DataType.TUPLE) ;
+        Schema.stringifySchema(sb, getPigServer().dumpSchema(alias), DataType.TUPLE);
 
         final String destination = FileLocalizer.getTemporaryPath(getPigServer().getPigContext()).toString();
         getCluster().copyFromLocalFile(data, destination, true);
@@ -320,15 +324,14 @@ public class NiftyPigTest {
 
     public void input(String setA, TestDataSet testData, String storagePigCsv) throws IOException, ParseException {
 
-        input(setA,testData.getDataSet(),storagePigCsv);
+        input(setA, testData.getDataSet(), storagePigCsv);
     }
 
     public DataSetReport validate(String result, ValidatedDataSet validatedDataset, DataSetValidator.ValidationMode mode, int tupleSize) throws IOException {
 
         DataSetValidator.Builder tuple = DataSetValidator.dataset(result).mode(mode).size(tupleSize);
 
-        for(TupleValidator.Builder t : validatedDataset.getTuples())
-        {
+        for (TupleValidator.Builder t : validatedDataset.getTuples()) {
             tuple.add(t);
         }
 
@@ -341,38 +344,21 @@ public class NiftyPigTest {
 
         TestDataSet testDataset = new TestDataSet();
 
-        for(Map<String,String> tuple : tuples)
-        {
+        for (Map<String, String> tuple : tuples) {
             List<String> dataset = Lists.newArrayList();
 
-            for(String col : schema)
-            {
+            for (String col : schema) {
                 dataset.add(tuple.get(col));
             }
             testDataset.add(convert(dataset, "|"));
         }
 
-        input(setA,testDataset,NiftyPigTest.STORAGE_PIG_PIPE);
+        input(setA, testDataset, NiftyPigTest.STORAGE_PIG_PIPE);
     }
 
-    private String convert(List<String> dataset, String s) throws Exception {
-
-        String data = "";
-
-        if(dataset.size() == 0)
-        {
-            throw new Exception("Dataset cannot be null");
-        }
-        else
-        {
-          data = dataset.get(0);
-
-            for(int i=1; i < dataset.size(); i++)
-            {
-                data = data +s+dataset.get(i);
-            }
-        }
-        return data;
+    private String convert(List<String> dataset, String seperator) throws Exception {
+        Preconditions.checkArgument(!dataset.isEmpty(), "A given data set cannot be null");
+        return Joiner.on(seperator).join(dataset);
     }
 
     public DataSetReport validate(String result, ValidateMappedDataSet validdata, DataSetValidator.ValidationMode mode, int tupleSize) throws IOException {
@@ -385,14 +371,11 @@ public class NiftyPigTest {
         List<String> schema = validdata.getSchema();
         DataSetValidator.Builder tuple = DataSetValidator.dataset(result).mode(mode).size(tupleSize);
 
-        for(Map<String,FieldValidator>  datatuple : tuples)
-        {
+        for (Map<String, FieldValidator> datatuple : tuples) {
             TupleValidator.Builder tuple1 = TupleValidator.tuple();
-            for(String col : schema)
-            {
+            for (String col : schema) {
                 FieldValidator validator = datatuple.get(col);
-                if(validator != null)
-                {
+                if (validator != null) {
                     tuple1.field(validator);
                 }
             }

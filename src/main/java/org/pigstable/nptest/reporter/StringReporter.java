@@ -1,6 +1,5 @@
 package org.pigstable.nptest.reporter;
 
-import org.apache.commons.io.IOUtils;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.result.FieldReport;
 import org.pigstable.nptest.result.TupleReport;
@@ -17,28 +16,23 @@ public class StringReporter {
     /**
      * Format the given DataSetReport in a human friendly way.
      *
-     * @param report    the report to format
-     * @return  A Human-readable representation of the report
+     * @param report the report to format
+     * @return A Human-readable representation of the report
      */
     public static String format(DataSetReport report) throws IOException {
-        StringWriter writer = new StringWriter();
-
-        try {
+        try (StringWriter writer = new StringWriter()) {
             format(report, writer);
-        } finally {
-            IOUtils.closeQuietly(writer);
+            return writer.toString();
         }
-
-        return writer.toString();
     }
 
     /**
      * Format the given DataSetReport in a human friendly way.
+     * <p/>
+     * the given will not be closed.
      *
-     *  the given will not be closed.
-     *
-     * @param report    the report to format
-     * @param writer    the writer to which to write the human-readable report
+     * @param report the report to format
+     * @param writer the writer to which to write the human-readable report
      */
     public static void format(DataSetReport report, Writer writer) throws IOException {
         writer.append("Validation Report For '").append(report.getName()).append("'\n");
@@ -58,16 +52,16 @@ public class StringReporter {
 
     /**
      * Format the given DataSetReport in a human friendly way.
+     * <p/>
+     * the given will not be closed.
      *
-     *  the given will not be closed.
-     *
-     * @param report    the report to format
-     * @param writer    the writer to which to write the human-readable report
+     * @param report the report to format
+     * @param writer the writer to which to write the human-readable report
      */
     public static void format(TupleReport report, Writer writer, String linePrefix) throws IOException {
         writer.append(linePrefix).append("- Tuple ").append(report.getKey());
 
-        if (report.getMessage() == null && ! report.hasFieldError()) {
+        if (report.getMessage() == null && !report.hasFieldError()) {
             writer.append(": Valid").append("\n");
         } else {
             writer.append("\n");
@@ -79,7 +73,7 @@ public class StringReporter {
 
             // -- iterate the tuple reports
             String childPrefix = linePrefix + "\t";
-            for (FieldReport fieldReport: report.getFieldReports()) {
+            for (FieldReport fieldReport : report.getFieldReports()) {
                 format(fieldReport, writer, childPrefix);
             }
         }
@@ -87,11 +81,11 @@ public class StringReporter {
 
     /**
      * Format the given DataSetReport in a human friendly way.
+     * <p/>
+     * the given will not be closed.
      *
-     *  the given will not be closed.
-     *
-     * @param report    the report to format
-     * @param writer    the writer to which to write the human-readable report
+     * @param report the report to format
+     * @param writer the writer to which to write the human-readable report
      */
     public static void format(FieldReport report, Writer writer, String linePrefix) throws IOException {
         writer.append(linePrefix).append("- Field #").append(Integer.toString(report.getFieldSequence())).append(": ");

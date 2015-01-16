@@ -1,8 +1,11 @@
 package org.pigstable.nptest;
 
-public class FieldObject<T> implements Comparable<FieldObject> {
-    private int fieldSequence;
-    private T object;
+import com.google.common.base.Objects;
+
+public final class FieldObject<T> implements Comparable<FieldObject> {
+
+    private final int fieldSequence;
+    private final T object;
 
     public FieldObject(int fieldSequence, T object) {
         this.fieldSequence = fieldSequence;
@@ -10,26 +13,24 @@ public class FieldObject<T> implements Comparable<FieldObject> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+    public boolean equals(Object other) {
+        return canEqual(other) && this.fieldSequence == ((FieldObject) other).fieldSequence;
+    }
 
-        FieldObject that = (FieldObject) o;
-
-        return fieldSequence == that.fieldSequence;
-
+    private boolean canEqual(Object other) {
+        return (this == other) || !(other == null || getClass() != other.getClass());
     }
 
     @Override
     public int hashCode() {
+        return Objects.hashCode(fieldSequence);
+    }
+
+    public final int getFieldSequence() {
         return fieldSequence;
     }
 
-    public int getFieldSequence() {
-        return fieldSequence;
-    }
-
-    public T getObject() {
+    public final T getObject() {
         return object;
     }
 
