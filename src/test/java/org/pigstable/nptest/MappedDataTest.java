@@ -9,6 +9,7 @@ import org.pigstable.nptest.dataset.MappedDataset;
 import org.pigstable.nptest.dataset.ValidateMappedDataSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
+import org.pigstable.nptest.test.ClassPathResource;
 import org.pigstable.nptest.validator.DataSetValidator;
 import org.pigstable.nptest.validator.FieldValidator;
 
@@ -19,7 +20,7 @@ import static org.pigstable.nptest.validator.FieldValidator.string;
 
 public class MappedDataTest {
 
-    private static final String PIG_SCRIPT = "simpleUnion.pig";
+    private static final String PIG_SCRIPT = ClassPathResource.create("simpleUnion.pig").systemPath();
 
     @Test
     @Category(TestCategories.PigTest.class)

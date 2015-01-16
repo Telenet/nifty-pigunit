@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
+import org.pigstable.nptest.test.ClassPathResource;
 import org.pigstable.nptest.validator.DataSetValidator;
 
 import static org.pigstable.nptest.validator.DataSetValidator.dataset;
@@ -15,7 +16,7 @@ import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
 public class ComplexUnionTest {
 
-    private static final String PIG_SCRIPT = "simpleUnion.pig";
+    private static final String PIG_SCRIPT = ClassPathResource.create("simpleUnion.pig").systemPath();
 
     private NiftyPigTest script;
 

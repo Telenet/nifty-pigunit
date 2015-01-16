@@ -9,6 +9,7 @@ import org.pigstable.nptest.dataset.MappedDataset;
 import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
+import org.pigstable.nptest.test.ClassPathResource;
 import org.pigstable.nptest.validator.DataSetValidator;
 
 import java.util.List;
@@ -18,7 +19,8 @@ import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
 public class ValidateMappedDataSetTest {
-    private static final String PIG_SCRIPT = "simpleUnion.pig";
+
+    private static final String PIG_SCRIPT = ClassPathResource.create("simpleUnion.pig").systemPath();
 
     @Test
     @Category(TestCategories.PigTest.class)

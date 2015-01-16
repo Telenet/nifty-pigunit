@@ -1,7 +1,5 @@
 package org.pigstable.nptest;
 
-import com.google.common.collect.Lists;
-import org.apache.pig.impl.logicalLayer.schema.Schema;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -9,16 +7,14 @@ import org.pigstable.nptest.dataset.TestDataSet;
 import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
+import org.pigstable.nptest.test.ClassPathResource;
 import org.pigstable.nptest.validator.DataSetValidator;
 
-import java.util.List;
-
-import static org.pigstable.nptest.validator.DataSetValidator.dataset;
 import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
 public class SimpleUnionTest {
-    private static final String PIG_SCRIPT = "simpleUnion.pig";
+    private static final String PIG_SCRIPT = ClassPathResource.create("simpleUnion.pig").systemPath();
 
     @Test
     @Category(TestCategories.PigTest.class)
