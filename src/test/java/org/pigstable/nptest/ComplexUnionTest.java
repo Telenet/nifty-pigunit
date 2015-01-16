@@ -1,35 +1,23 @@
 package org.pigstable.nptest;
 
-import org.apache.pig.backend.executionengine.ExecException;
-import org.apache.pig.data.Tuple;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.mockito.Mockito;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.validator.DataSetValidator;
 
-import java.io.DataInput;
-import java.io.DataOutput;
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.List;
-
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.when;
 import static org.pigstable.nptest.validator.DataSetValidator.dataset;
 import static org.pigstable.nptest.validator.FieldValidator.isString;
 import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
 public class ComplexUnionTest {
+
     private static final String PIG_SCRIPT = "simpleUnion.pig";
 
     private NiftyPigTest script;
-    private Tuple tuple;
 
     @Before
     public void setUp() throws Exception {
@@ -87,10 +75,10 @@ public class ComplexUnionTest {
 
         // -- validate the output using the DataSetValidator
         DataSetReport report = script.validate(dataset("result").mode(DataSetValidator.ValidationMode.ByOrder).size(4)
-                .add(tuple().field(string("1234")).field(string("Garbage")))
-                .add(tuple().field(string("12345")).field(string("Collector")))
-                .add(tuple().field(string("Starship")).field(string("Enterprise")))
-                .add(tuple().field(string("Battlestar")).field(string("Galactica")))
+                        .add(tuple().field(string("Starship")).field(string("Enterprise")))
+                        .add(tuple().field(string("Battlestar")).field(string("Galactica")))
+                        .add(tuple().field(string("1234")).field(string("Garbage")))
+                        .add(tuple().field(string("12345")).field(string("Collector")))
         );
 
         // -- print the test report

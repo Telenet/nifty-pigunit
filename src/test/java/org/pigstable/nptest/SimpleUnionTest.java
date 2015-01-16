@@ -46,10 +46,10 @@ public class SimpleUnionTest {
 
         ValidatedDataSet validatedDataset = new ValidatedDataSet();
 
-        validatedDataset.add(tuple().field(string("139380")).field(string("AD210")));
-        validatedDataset.add(tuple().field(string("139380")).field(string("AD2100")));
         validatedDataset.add(tuple().field(string("SOHO")).field(string("SOHO")));
         validatedDataset.add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")));
+        validatedDataset.add(tuple().field(string("139380")).field(string("AD210")));
+        validatedDataset.add(tuple().field(string("139380")).field(string("AD2100")));
 
         //Validate with new api
         DataSetReport report = test.validate("result", validatedDataset, DataSetValidator.ValidationMode.ByOrder,4);

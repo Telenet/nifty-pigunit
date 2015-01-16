@@ -92,10 +92,10 @@ public class MappedDataTest {
         testValidator4.put("col1",string("9xaiqa00840tx05pp0kqi"));
         testValidator4.put("col2",string("SOHO"));
 
-        validdata.add(testValidator1);
-        validdata.add(testValidator2);
         validdata.add(testValidator3);
         validdata.add(testValidator4);
+        validdata.add(testValidator1);
+        validdata.add(testValidator2);
 
 
         //Validate with new api
