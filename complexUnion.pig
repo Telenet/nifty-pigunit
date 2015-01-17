@@ -14,6 +14,6 @@ setB =
         field2: chararray
     );
 
-result = UNION setA , setB ;
+result = Union setA, setB;
 
 STORE result INTO 'output.csv' USING PigStorage(';');
