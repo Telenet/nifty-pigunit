@@ -1,29 +1,27 @@
 package org.pigstable.nptest.dataset;
 
 
+import com.google.common.collect.ForwardingList;
 import com.google.common.collect.Lists;
 
 import java.util.List;
 import java.util.Map;
 
-public class MappedDataset {
+public class MappedDataset extends ForwardingList<Map<String, String>> {
 
-    private List<String> schema;
-    private List<Map<String, String>> tuples = Lists.newArrayList();
+    private final List<Map<String, String>> delegate = Lists.newArrayList();
+    private final List<String> schema;
 
     public MappedDataset(List<String> schema) {
         this.schema = schema;
-    }
-
-    public void add(Map<String, String> tuple) {
-        tuples.add(tuple);
     }
 
     public List<String> getSchema() {
         return schema;
     }
 
-    public List<Map<String, String>> getTuples() {
-        return tuples;
+    @Override
+    protected List<Map<String, String>> delegate() {
+        return delegate;
     }
 }

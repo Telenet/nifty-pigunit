@@ -339,11 +339,10 @@ public class NiftyPigTest {
 
     public void input(String setA, MappedDataset mappedDataset) throws Exception {
         List<String> schema = mappedDataset.getSchema();
-        List<Map<String, String>> tuples = mappedDataset.getTuples();
 
         DataSetBuilder datasetBuilder = DataSetBuilder.empty();
 
-        for (Map<String, String> tuple : tuples) {
+        for (Map<String, String> tuple : mappedDataset) {
             List<String> dataset = Lists.newArrayList();
 
             for (String col : schema) {
