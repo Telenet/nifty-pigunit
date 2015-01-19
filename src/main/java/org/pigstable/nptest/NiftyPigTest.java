@@ -17,7 +17,7 @@ import org.apache.pig.tools.parameters.ParameterSubstitutionPreprocessor;
 import org.apache.pig.tools.parameters.ParseException;
 import org.junit.Assert;
 import org.pigstable.nptest.dataset.MappedDataset;
-import org.pigstable.nptest.dataset.TestDataSet;
+import org.pigstable.nptest.dataset.DataSetBuilder;
 import org.pigstable.nptest.dataset.ValidateMappedDataSet;
 import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.result.DataSetReport;
@@ -291,6 +291,10 @@ public class NiftyPigTest {
         }
     }
 
+    public void input(String alias, DataSetBuilder dataSet, String storage) throws IOException, ParseException {
+        input(alias, dataSet.build(), storage);
+    }
+
     public void input(String alias, String[] data, String storage) throws IOException, ParseException {
         analyzeScript();
 
@@ -322,11 +326,6 @@ public class NiftyPigTest {
         return validator.validate(getAlias(validator.getName()));
     }
 
-    public void input(String setA, TestDataSet testData, String storagePigCsv) throws IOException, ParseException {
-
-        input(setA, testData.getDataSet(), storagePigCsv);
-    }
-
     public DataSetReport validate(String result, ValidatedDataSet validatedDataset, DataSetValidator.ValidationMode mode, int tupleSize) throws IOException {
 
         DataSetValidator.Builder tuple = DataSetValidator.dataset(result).mode(mode).size(tupleSize);
@@ -342,7 +341,7 @@ public class NiftyPigTest {
         List<String> schema = mappedDataset.getSchema();
         List<Map<String, String>> tuples = mappedDataset.getTuples();
 
-        TestDataSet testDataset = new TestDataSet();
+        DataSetBuilder datasetBuilder = DataSetBuilder.empty();
 
         for (Map<String, String> tuple : tuples) {
             List<String> dataset = Lists.newArrayList();
@@ -350,10 +349,10 @@ public class NiftyPigTest {
             for (String col : schema) {
                 dataset.add(tuple.get(col));
             }
-            testDataset.add(convert(dataset, "|"));
+            datasetBuilder.add(convert(dataset, "|"));
         }
 
-        input(setA, testDataset, NiftyPigTest.STORAGE_PIG_PIPE);
+        input(setA, datasetBuilder.build(), NiftyPigTest.STORAGE_PIG_PIPE);
     }
 
     private String convert(List<String> dataset, String seperator) throws Exception {

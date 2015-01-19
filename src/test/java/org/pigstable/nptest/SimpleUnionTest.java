@@ -1,9 +1,10 @@
 package org.pigstable.nptest;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
-import org.pigstable.nptest.dataset.TestDataSet;
+import org.pigstable.nptest.dataset.DataSetBuilder;
 import org.pigstable.nptest.dataset.ValidatedDataSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
@@ -14,26 +15,27 @@ import static org.pigstable.nptest.validator.FieldValidator.string;
 import static org.pigstable.nptest.validator.TupleValidator.tuple;
 
 public class SimpleUnionTest {
-    private static final String PIG_SCRIPT = ClassPathResource.create("simpleUnion.pig").systemPath();
+
+    private NiftyPigTest test;
+
+    @Before
+    public void setUp() throws Exception {
+        this.test = new NiftyPigTest(ClassPathResource.create("simpleUnion.pig").systemPath());
+    }
 
     @Test
     @Category(TestCategories.PigTest.class)
     public void testTextInput() throws Exception{
-        // -- initialize the pig testing class
-        NiftyPigTest test = new NiftyPigTest(PIG_SCRIPT);
-
-
-        TestDataSet setA = new TestDataSet();
-
-        setA.add("139380;AD210");
-        setA.add("139380;AD2100");
-
+        DataSetBuilder setA = DataSetBuilder.of(
+                "139380;AD210",
+                "139380;AD2100"
+        );
         test.input("setA", setA, NiftyPigTest.STORAGE_PIG_CSV);
 
-        TestDataSet setB = new TestDataSet();
-
-        setB.add("SOHO;SOHO");
-        setB.add("9xaiqa00840tx05pp0kqi;SOHO");
+        DataSetBuilder setB = DataSetBuilder.of(
+                "SOHO;SOHO",
+                "9xaiqa00840tx05pp0kqi;SOHO"
+        );
 
         test.input("setB", setB, NiftyPigTest.STORAGE_PIG_CSV);
 
@@ -56,5 +58,4 @@ public class SimpleUnionTest {
         // -- check the report was valid
         Assert.assertTrue(report.isValid());
     }
-
 }

@@ -11,8 +11,7 @@ public class MappedDataset {
     private List<String> schema;
     private List<Map<String, String>> tuples = Lists.newArrayList();
 
-    public MappedDataset(List<String> schema)
-    {
+    public MappedDataset(List<String> schema) {
         this.schema = schema;
     }
 
@@ -24,8 +23,7 @@ public class MappedDataset {
         return schema;
     }
 
-    public List<Map<String, String>> getTuples()
-    {
+    public List<Map<String, String>> getTuples() {
         return tuples;
     }
 }

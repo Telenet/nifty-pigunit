@@ -50,7 +50,7 @@ public class ComplexUnionTest {
         );
 
         // -- print the test report
-        System.out.println(StringReporter.format(report));
+        System.out.println(report);
 
         Assert.assertTrue(report.isValid());
     }
