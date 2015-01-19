@@ -19,7 +19,7 @@ import org.junit.Assert;
 import org.pigstable.nptest.dataset.MappedDataset;
 import org.pigstable.nptest.dataset.DataSetBuilder;
 import org.pigstable.nptest.dataset.ValidateMappedDataSet;
-import org.pigstable.nptest.dataset.ValidatedDataSet;
+import org.pigstable.nptest.dataset.ValidatorSet;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.validator.DataSetValidator;
 import org.pigstable.nptest.validator.FieldValidator;
@@ -326,14 +326,11 @@ public class NiftyPigTest {
         return validator.validate(getAlias(validator.getName()));
     }
 
-    public DataSetReport validate(String result, ValidatedDataSet validatedDataset, DataSetValidator.ValidationMode mode, int tupleSize) throws IOException {
-
+    public DataSetReport validate(String result, ValidatorSet validatorSet, DataSetValidator.ValidationMode mode, int tupleSize) throws IOException {
         DataSetValidator.Builder tuple = DataSetValidator.dataset(result).mode(mode).size(tupleSize);
-
-        for (TupleValidator.Builder t : validatedDataset.getTuples()) {
+        for (TupleValidator.Builder t : validatorSet) {
             tuple.add(t);
         }
-
         return validate(tuple);
     }
 
