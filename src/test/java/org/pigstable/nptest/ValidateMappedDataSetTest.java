@@ -6,7 +6,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pigstable.nptest.dataset.MappedDataset;
-import org.pigstable.nptest.dataset.ValidatedDataSet;
+import org.pigstable.nptest.dataset.ValidatorSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.test.ClassPathResource;
@@ -71,7 +71,7 @@ public class ValidateMappedDataSetTest {
         // -- actually execute the pig script
         test.execute();
 
-        ValidatedDataSet validatedDataset = new ValidatedDataSet();
+        ValidatorSet validatedDataset = new ValidatorSet();
 
         validatedDataset.add(tuple().field(string("SOHO")).field(string("SOHO")));
         validatedDataset.add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")));

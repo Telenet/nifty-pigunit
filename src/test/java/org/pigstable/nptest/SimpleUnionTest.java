@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.pigstable.nptest.dataset.DataSetBuilder;
-import org.pigstable.nptest.dataset.ValidatedDataSet;
+import org.pigstable.nptest.dataset.ValidatorSet;
 import org.pigstable.nptest.reporter.StringReporter;
 import org.pigstable.nptest.result.DataSetReport;
 import org.pigstable.nptest.test.ClassPathResource;
@@ -42,15 +42,15 @@ public class SimpleUnionTest {
         // -- actually execute the pig script
         test.execute();
 
-        ValidatedDataSet validatedDataset = new ValidatedDataSet();
+        ValidatorSet validatorSet = new ValidatorSet();
 
-        validatedDataset.add(tuple().field(string("SOHO")).field(string("SOHO")));
-        validatedDataset.add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")));
-        validatedDataset.add(tuple().field(string("139380")).field(string("AD210")));
-        validatedDataset.add(tuple().field(string("139380")).field(string("AD2100")));
+        validatorSet.add(tuple().field(string("SOHO")).field(string("SOHO")));
+        validatorSet.add(tuple().field(string("9xaiqa00840tx05pp0kqi")).field(string("SOHO")));
+        validatorSet.add(tuple().field(string("139380")).field(string("AD210")));
+        validatorSet.add(tuple().field(string("139380")).field(string("AD2100")));
 
         //Validate with new api
-        DataSetReport report = test.validate("result", validatedDataset, DataSetValidator.ValidationMode.ByOrder,4);
+        DataSetReport report = test.validate("result", validatorSet, DataSetValidator.ValidationMode.ByOrder,4);
 
         // -- print the test report
         System.out.println(StringReporter.format(report));
